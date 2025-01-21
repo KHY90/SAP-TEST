@@ -7,18 +7,28 @@ sap.ui.define([
 
     return Controller.extend("ui5.walkthrough.controller.MainPage", {
         onInit: function () {
-            // 라우터 설정
-            var oRouter = this.getOwnerComponent().getRouter();
-            oRouter.getRoute("MainPage").attachPatternMatched(this._onRouteMatched, this);
-
             var oI18nModel = new sap.ui.model.resource.ResourceModel({
                 bundleName: "ui5.walkthrough.i18n.i18n"
             });
             this.getView().setModel(oI18nModel, "i18n");
 
-            // OData 모델 설정 (manifest.json에 정의된 hanaModel 사용)
-            var oModel = this.getOwnerComponent().getModel("hanaModel");
-            this.getView().setModel(oModel, "RequestModel");
+            var sUrl = "/odata/v4/request/Request";
+
+            // 데이터 호출
+            $.ajax({
+                url: sUrl,
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                success: function (oData) {
+                    var oModel = new JSONModel(oData.value); // 데이터 모델 생성
+                    this.getView().setModel(oModel, "RequestModel");
+                }.bind(this),
+                error: function () {
+                    MessageToast.show("데이터를 불러오는 중 오류가 발생했습니다.");
+                }
+            });
 
             // MainPage 헤더 확장 상태 모델 설정
             var oViewModel = new JSONModel({
@@ -34,13 +44,13 @@ sap.ui.define([
         },
 
         onNavigateToDetail: function (oEvent) {
-            var oSelectedItem = oEvent.getSource(); // 클릭된 아이템
-            var sRequestNumber = oSelectedItem.getBindingContext("RequestModel").getProperty("request_number");
+            // 선택된 요청 번호 가져오기
+            var oSelectedItem = oEvent.getSource().getParent();
+            var sRequestNumber = oSelectedItem.getBindingContext().getProperty("request_number");
 
-            // 라우터를 통해 디테일 페이지로 이동
-            var oRouter = this.getOwnerComponent().getRouter();
-            oRouter.navTo("DetailPage", {
-                requestNumber: sRequestNumber // 디테일 페이지로 넘길 파라미터
+            // 라우터 네비게이션 호출
+            this.getOwnerComponent().getRouter().navTo("DetailPage", {
+                requestNumber: sRequestNumber
             });
         },
 

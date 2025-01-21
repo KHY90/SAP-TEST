@@ -7,10 +7,8 @@
         <App
             class="myAppDemoWT"
             id="app">
-            <!-- MainPage -->
-            <mvc:XMLView viewName="ui5.walkthrough.view.MainPage" id="mainPage" />
-            <!-- DetailPage -->
-            <mvc:XMLView viewName="ui5.walkthrough.view.DetailPage" id="detailPage" />
+
+            <mvc:XMLView viewName="ui5.walkthrough.view.MainPage" />
         </App>
     </Shell>
 </mvc:View>

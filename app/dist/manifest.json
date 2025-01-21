@@ -74,7 +74,7 @@
                 {
                     "pattern": "",
                     "name": "Default",
-                    "target": "MainPages"
+                    "target": "MainPage"
                 },
                 {
                     "pattern": "Main",
@@ -88,6 +88,10 @@
                 }
             ],
             "targets": {
+                "MainPage": {
+                    "viewName": "App",
+                    "type": "XML"
+                },
                 "MainPages": {
                     "viewName": "MainPage",
                     "type": "XML"
@@ -98,7 +102,7 @@
                 }
             }
         },
-        "contentDensities": {
+        "contentDensitieㅁs": {
             "compact": true,
             "cozy": true
         }

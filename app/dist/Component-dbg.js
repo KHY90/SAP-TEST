@@ -11,16 +11,15 @@ sap.ui.define([
 
        init: function () {
            // 부모의 init 호출
-            UIComponent.prototype.init.apply(this, arguments);
+           UIComponent.prototype.init.apply(this, arguments);
 
            // 라우터 초기화
-            this.getRouter().initialize();
-
-            // JSON 모델 설정
-            var oViewModel = new JSONModel({
-                headerExpanded: true
-            });
-            this.setModel(oViewModel);
+           this.getRouter().initialize();
+                       // JSON 모델 설정 (필터, 헤더 등 데이터 바인딩)
+                       var oViewModel = new JSONModel({
+                        headerExpanded: true
+                    });
+                    this.setModel(oViewModel);
        }
    });
 });

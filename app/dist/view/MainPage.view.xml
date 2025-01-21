@@ -7,13 +7,11 @@
     xmlns:svm="sap.ui.comp.smartvariants"
     xmlns:core="sap.ui.core" 
     height="100%">
-
-    <f:DynamicPage id="mainPages"
+    <f:DynamicPage id="DynamicPageId"
         stickySubheaderProvider="iconTabBar"
         class="sapUiNoContentPadding"
-        toggleHeaderOnTitleClick="true"
+        toggleHeaderOnTitleClick="{ViewModel>/titleClickable}"
         headerExpanded="{/headerExpanded}">
-        
         <f:title>
             <f:DynamicPageTitle>
                 <f:heading>
@@ -27,7 +25,6 @@
                 </f:snappedContent>
             </f:DynamicPageTitle>
         </f:title>
-        
         <f:header>
             <f:DynamicPageHeader>
                 <f:content>
@@ -40,10 +37,10 @@
                                         name="Name"
                                         selectionChange=".onSelectionChange"
                                         items="{
-                                            path: 'RequestModel>/ProductNames',
+                                            path: '/ProductNames',
                                             templateShareable: true
                                         }">
-                                        <core:Item key="{RequestModel>key}" text="{RequestModel>name}" />
+                                        <core:Item key="{key}" text="{name}" />
                                     </MultiComboBox>
                                 </fb:control>
                             </fb:FilterGroupItem>
@@ -53,10 +50,10 @@
                                         name="Category"
                                         selectionChange=".onSelectionChange"
                                         items="{
-                                            path: 'RequestModel>/ProductCategories',
+                                            path: '/ProductCategories',
                                             templateShareable: true
                                         }">
-                                        <core:Item key="{RequestModel>key}" text="{RequestModel>name}" />
+                                        <core:Item key="{key}" text="{name}" />
                                     </MultiComboBox>
                                 </fb:control>
                             </fb:FilterGroupItem>
@@ -66,10 +63,10 @@
                                         name="SupplierName"
                                         selectionChange=".onSelectionChange"
                                         items="{
-                                            path: 'RequestModel>/ProductSuppliers',
+                                            path: '/ProductSuppliers',
                                             templateShareable: true
                                         }">
-                                        <core:Item key="{RequestModel>key}" text="{RequestModel>name}" />
+                                        <core:Item key="{key}" text="{name}" />
                                     </MultiComboBox>
                                 </fb:control>
                             </fb:FilterGroupItem>
@@ -78,7 +75,6 @@
                 </f:content>
             </f:DynamicPageHeader>
         </f:header>
-        
         <f:content>
             <IconTabBar id="iconTabBar" class="sapUiResponsiveContentPadding">
                 <items>
@@ -87,10 +83,7 @@
                             mode="MultiSelect"
                             inset="false"
                             sticky="HeaderToolbar,ColumnHeaders"
-                            items="{
-                                path: 'RequestModel>/Request',
-                                templateShareable: true
-                            }">
+                            items="{RequestModel>/}">
                             <headerToolbar>
                                 <OverflowToolbar>
                                     <Title text="{i18n>headerTitle}" level="H2" />
@@ -145,7 +138,6 @@
                 </items>
             </IconTabBar>
         </f:content>
-        
         <f:footer>
             <OverflowToolbar>
                 <ToolbarSpacer />

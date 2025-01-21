@@ -8,7 +8,7 @@
 	<f:DynamicPage id="detailPageId"
 		stickySubheaderProvider="iconTabBar"
 		class="sapUiNoContentPadding"
-		toggleHeaderOnTitleClick="true">
+		toggleHeaderOnTitleClick="{/titleClickable}">
 		<f:title>
 			<f:DynamicPageTitle>
 				<f:heading>

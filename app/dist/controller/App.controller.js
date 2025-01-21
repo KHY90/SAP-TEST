@@ -1,0 +1,1 @@
+sap.ui.define(["sap/ui/core/mvc/Controller"],function(e){"use strict";return e.extend("ui5.walkthrough.controller.App",{onInit:function(){var e=this.getOwnerComponent().getModel("hanaModel");this.getView().setModel(e)}})});
