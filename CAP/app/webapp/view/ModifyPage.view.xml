@@ -1,0 +1,115 @@
+<mvc:View
+    xmlns="sap.m"
+    xmlns:mdc="sap.ui.mdc"
+    xmlns:core="sap.ui.core"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns:form="sap.ui.layout.form"
+    xmlns:unified="sap.ui.unified"
+    controllerName="ui5.walkthrough.controller.ModifyPage"
+>
+    <Page
+        id="modifyPage"
+        title="메뉴 수정 페이지"
+        showNavButton="true"
+        navButtonPress="onNavBack"
+    >
+        <form:SimpleForm
+            layout="ColumnLayout"
+            editable="true"
+        >
+            <form:toolbar>
+                <OverflowToolbar>
+                    <Title text="수정할 내용을 입력해주세요." />
+                    <ToolbarSpacer />
+                    <Button
+                        text="수정 완료"
+                        type="Emphasized"
+                        press="onSaveConfirm"
+                    />
+                    <Button
+                        text="수정 취소"
+                        type="Emphasized"
+                        press="onCancelConfirm"
+                    />
+                </OverflowToolbar>
+            </form:toolbar>
+
+            <Label text="등록번호" />
+            <Input
+                id="F-mMenuCode"
+                value="{path: 'ModifyModel>/menu_code'}"
+                editable="false"
+            />
+
+            <Label text="상품 한글 이름" />
+            <Input
+                id="F-mMenuNameKor"
+                value="{path: 'ModifyModel>/menu_name_kor'}"
+            />
+
+            <Label text="상품 영어 이름" />
+            <Input
+                id="F-mMenuNameEng"
+                value="{path: 'ModifyModel>/menu_name_eng'}"
+            />
+
+            <Label text="상품 카테고리" />
+            <Select
+                id="F-mMenuCategory"
+                selectedKey="{path: 'ModifyModel>/menu_category'}"
+                change="onCategoryChange"
+            >
+                <items>
+                    <core:Item
+                        key="음료"
+                        text="음료"
+                    />
+                    <core:Item
+                        key="상품"
+                        text="상품"
+                    />
+                    <core:Item
+                        key="푸드"
+                        text="푸드"
+                    />
+                </items>
+            </Select>
+
+            <Label text="소분류" />
+            <Select
+                id="F-mMenuSmallCategory"
+                selectedKey="{path: 'ModifyModel>/menu_small_category'}"
+            >
+                <!-- 소분류는 동적으로 로드됨 -->
+            </Select>
+
+            <Label text="상품 가격" />
+            <Input
+                id="F-mMenuPrice"
+                value="{path: 'ModifyModel>/menu_price'}"
+                type="Number"
+            />
+
+            <Label text="상품 설명" />
+            <TextArea
+                id="F-mMenuDescription"
+                value="{path: 'ModifyModel>/menu_description'}"
+            />
+
+            <Label text="제품 영양 정보" />
+            <TextArea
+                id="F-mMenuNutritionInfo"
+                value="{path: 'ModifyModel>/menu_nutrition_info'}"
+            />
+
+            <Label text="이미지 업로드" />
+            <unified:FileUploader
+                id="mimageUploader"
+                name="file"
+                change="onFileUpload"
+                placeholder="이미지 파일을 선택하세요"
+                tooltip="이미지를 업로드하세요"
+            />
+        </form:SimpleForm>
+    </Page>
+</mvc:View>

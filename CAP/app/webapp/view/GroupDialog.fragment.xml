@@ -1,0 +1,12 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core">
+    <ViewSettingsDialog
+        confirm=".handleGroupDialogConfirm"
+        reset=".resetGroupDialog">
+        <groupItems>
+            <ViewSettingsItem text="카테고리" key="menu_category" />
+            <ViewSettingsItem text="가격" key="menu_price" />
+        </groupItems>
+    </ViewSettingsDialog>
+</core:FragmentDefinition>

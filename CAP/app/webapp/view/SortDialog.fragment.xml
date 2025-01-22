@@ -1,0 +1,12 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core">
+    <ViewSettingsDialog
+        confirm="handleSortDialogConfirm">
+        <sortItems>
+            <ViewSettingsItem text="등록번호" key="menu_code" />
+            <ViewSettingsItem text="가격" key="menu_price" />
+            <ViewSettingsItem text="등록 날짜" key="registration_date" />
+        </sortItems>
+    </ViewSettingsDialog>
+</core:FragmentDefinition>

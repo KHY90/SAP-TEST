@@ -1,0 +1,23 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:tnt="sap.tnt"
+    xmlns:core="sap.ui.core">
+    <tnt:ToolHeader id="commonHeader" class="sapUiTinyMargin sapUiLargeMarginTop">
+        <Image src="test-resources/sap/tnt/images/SAP_Logo.png" decorative="false" press="onLogoPressed" tooltip="SAP Logo">
+            <layoutData>
+                <OverflowToolbarLayoutData priority="NeverOverflow" />
+            </layoutData>
+        </Image>
+        <Title text="Product Name" wrapping="false">
+            <layoutData>
+                <OverflowToolbarLayoutData priority="Disappear" />
+            </layoutData>
+        </Title>
+        <ToolbarSpacer />
+        <Avatar src="../image/logo.png" displaySize="XS" press=".onAvatarPressed" tooltip="Profile">
+            <layoutData>
+                <OverflowToolbarLayoutData priority="NeverOverflow" />
+            </layoutData>
+        </Avatar>
+    </tnt:ToolHeader>
+</core:FragmentDefinition>

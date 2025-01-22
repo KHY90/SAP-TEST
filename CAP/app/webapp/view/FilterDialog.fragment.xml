@@ -1,0 +1,29 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core">
+    <ViewSettingsDialog
+        confirm="handleFilterDialogConfirm">
+        <filterItems>
+            <ViewSettingsFilterItem
+                text="가격"
+                key="menu_price"
+                multiSelect="false">
+                <items>
+                    <ViewSettingsItem text="30000 이하" key="menu_price___LE___3000___X" />
+                    <ViewSettingsItem text="3000 ~ 10000 사이" key="menu_price___BT___3000___10000" />
+                    <ViewSettingsItem text="11000 이상" key="menu_price___GT___11000___X" />
+                </items>
+            </ViewSettingsFilterItem>
+            <ViewSettingsFilterItem
+                text="카테고리"
+                key="menu_category"
+                multiSelect="true">
+                <items>
+                    <ViewSettingsItem text="음료" key="menu_category___EQ___음료" />
+                    <ViewSettingsItem text="푸드" key="menu_category___EQ___푸드" />
+                    <ViewSettingsItem text="상품" key="menu_category___EQ___상품" />
+                </items>
+            </ViewSettingsFilterItem>
+        </filterItems>
+    </ViewSettingsDialog>
+</core:FragmentDefinition>

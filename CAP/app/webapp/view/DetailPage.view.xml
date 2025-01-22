@@ -1,0 +1,158 @@
+<mvc:View
+    controllerName="ui5.walkthrough.controller.DetailPage"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:f="sap.f"
+    xmlns:layout="sap.ui.layout"
+    xmlns:core="sap.ui.core"
+    height="100%"
+>
+    <f:DynamicPage
+        id="detailPageId"
+        stickySubheaderProvider="iconTabBar"
+        class="sapUiNoContentPadding"
+        toggleHeaderOnTitleClick="true"
+    >
+        <f:title>
+            <f:DynamicPageTitle>
+                <f:heading>
+                    <HBox>
+                        <Title text="{DetailModel>/menu_name_kor}" />
+                        <Image
+                            id="productImageHeader"
+                            src="{DetailModel>/menu_image}"
+                            alt="등록된 이미지"
+                            width="50px"
+                            height="50px"
+                            visible="{= !!${DetailModel>/menu_image}}"
+                            class="sapUiTinyMarginBegin"
+                        />
+                    </HBox>
+                </f:heading>
+                <f:breadcrumbs>
+                    <Breadcrumbs>
+                        <Link
+                            text="홈"
+                            press="onNavBack"
+                        />
+                    </Breadcrumbs>
+                </f:breadcrumbs>
+                <f:expandedContent>
+                    <Label text="등록번호: {DetailModel>/menu_code}" />
+                </f:expandedContent>
+                <f:snappedContent>
+                    <Label text="등록번호: {DetailModel>/menu_code}" />
+                </f:snappedContent>
+                <f:actions>
+                    <Button
+                        text="수정"
+                        icon="sap-icon://edit"
+                        type="Emphasized"
+                        press="onEditPress"
+                    />
+                    <Button
+                        text="삭제"
+                        type="Reject"
+                        press="onDeletePress"
+                        tooltip="삭제"
+                        icon="sap-icon://delete"
+                    />
+                </f:actions>
+            </f:DynamicPageTitle>
+        </f:title>
+        <f:content>
+            <IconTabBar
+                id="iconBar"
+                class="sapUiResponsiveContentPadding"
+            >
+                <items>
+                    <IconTabFilter text="상품 정보">
+                        <VBox>
+                            <Table
+                                id="idTable"
+                                inset="false"
+                                sticky="HeaderToolbar,ColumnHeaders"
+                                width="auto"
+                            >
+                                <columns>
+                                    <Column>
+                                        <Text text="목록" />
+                                    </Column>
+                                    <Column>
+                                        <Text text="값" />
+                                    </Column>
+                                </columns>
+                                <items>
+                                    <ColumnListItem>
+                                        <cells>
+                                            <Text text="등록번호" />
+                                            <Text
+                                                text="{DetailModel>/menu_code}"
+                                            />
+                                        </cells>
+                                    </ColumnListItem>
+                                    <ColumnListItem>
+                                        <cells>
+                                            <Text text="상품 이름" />
+                                            <Text
+                                                text="{DetailModel>/menu_name_kor}"
+                                            />
+                                        </cells>
+                                    </ColumnListItem>
+                                    <ColumnListItem>
+                                        <cells>
+                                            <Text text="카테고리" />
+                                            <Text
+                                                text="{DetailModel>/menu_category}"
+                                            />
+                                        </cells>
+                                    </ColumnListItem>
+                                    <ColumnListItem>
+                                        <cells>
+                                            <Text text="소분류" />
+                                            <Text
+                                                text="{DetailModel>/menu_small_category}"
+                                            />
+                                        </cells>
+                                    </ColumnListItem>
+                                    <ColumnListItem>
+                                        <cells>
+                                            <Text text="가격" />
+                                            <Text
+                                                text="{= Math.floor(${DetailModel>/menu_price}) }"
+                                            />
+                                        </cells>
+                                    </ColumnListItem>
+                                    <ColumnListItem>
+                                        <cells>
+                                            <Text text="등록 날짜" />
+                                            <Text
+                                                text="{= ${DetailModel>/registration_date} ? ${DetailModel>/registration_date}.substring(0, 10) : ''}"
+                                            />
+                                        </cells>
+                                    </ColumnListItem>
+                                    <ColumnListItem>
+                                        <cells>
+                                            <Text text="수정 날짜" />
+                                            <Text
+                                                text="{= ${DetailModel>/modify_date} ? ${DetailModel>/modify_date}.substring(0, 10) : ''}"
+                                            />
+                                        </cells>
+                                    </ColumnListItem>
+                                    <ColumnListItem>
+                                        <cells>
+                                            <Text text="상품 설명" />
+                                            <Text
+                                                text="{DetailModel>/menu_description}"
+                                            />
+                                        </cells>
+                                    </ColumnListItem>
+                                </items>
+                            </Table>
+                        </VBox>
+                    </IconTabFilter>
+                </items>
+            </IconTabBar>
+        </f:content>
+    </f:DynamicPage>
+</mvc:View>
