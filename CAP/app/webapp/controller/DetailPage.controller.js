@@ -17,7 +17,6 @@ sap.ui.define([
         _onRouteMatched: function (oEvent) {
             const sMenuCode = oEvent.getParameter("arguments").menuCode;
 
-            // AJAX 요청으로 데이터 로드
             const sUrl = `/odata/v4/cafe-menu/MenuItems(${sMenuCode})`;
             const oModel = new JSONModel();
 
@@ -27,7 +26,13 @@ sap.ui.define([
                 success: (data) => {
                     console.log("Detail Data Loaded:", data);
 
-                    // 데이터 설정
+                    if (data.menu_image) {
+                        // Base64 데이터를 Data URL로 변환
+                        data.menu_image_src = `data:image/webp;base64,${data.menu_image}`;
+                    } else {
+                        // 이미지가 없을 경우 기본 이미지 사용
+                        data.menu_image_src = "image/default.png";
+                    }
                     oModel.setData(data);
                     this.getView().setModel(oModel, "DetailModel");
                 },
@@ -36,6 +41,15 @@ sap.ui.define([
                     MessageToast.show("디테일 데이터를 로드하지 못했습니다.");
                 }
             });
+        },
+
+        formatStatus: function (status) {
+            if (status === "active") {
+                return "image/check.png";
+            } else if (status === "deactive") {
+                return "image/soldout.svg";
+            }
+            return "";
         },
 
         onDeletePress: function () {

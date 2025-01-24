@@ -1,11 +1,35 @@
 <mvc:View
     controllerName="ui5.walkthrough.controller.App"
     xmlns="sap.m"
+    xmlns:tnt="sap.tnt"
+    xmlns:core="sap.ui.core"
     xmlns:mvc="sap.ui.core.mvc"
     displayBlock="true">
-    <Shell>
-        <App
-            class="myAppDemoWT"
-            id="app" />
-    </Shell>
+    
+    <VBox class="appContainer" fitContainer="true">
+        <!-- 헤더 -->
+        <tnt:ToolHeader id="commonHeader" class="commonHeader" width="100%">
+            <Image src="image/logo.svg" decorative="false" press="onLogoPressed" tooltip="Cafe Logo">
+                <layoutData>
+                    <OverflowToolbarLayoutData priority="NeverOverflow" />
+                </layoutData>
+            </Image>
+            <Title text="SAP CAFE MANAGER PAGE" wrapping="false">
+                <layoutData>
+                    <OverflowToolbarLayoutData priority="Disappear" />
+                </layoutData>
+            </Title>
+            <ToolbarSpacer />
+            <Avatar src="../image/logo.png" displaySize="XS" press=".onAvatarPressed" tooltip="Profile">
+                <layoutData>
+                    <OverflowToolbarLayoutData priority="NeverOverflow" />
+                </layoutData>
+            </Avatar>
+        </tnt:ToolHeader>
+
+        <!-- 콘텐츠 영역 -->
+        <Shell>
+            <App id="app" class="myAppDemoWT" width="100%" />
+        </Shell>
+    </VBox>
 </mvc:View>

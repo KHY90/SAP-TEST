@@ -28,7 +28,7 @@
                     />
                     <Button
                         text="수정 취소"
-                        type="Emphasized"
+                        type="Reject"
                         press="onCancelConfirm"
                     />
                 </OverflowToolbar>
@@ -79,16 +79,35 @@
             <Select
                 id="F-mMenuSmallCategory"
                 selectedKey="{path: 'ModifyModel>/menu_small_category'}"
-            >
-                <!-- 소분류는 동적으로 로드됨 -->
-            </Select>
-
+            />
             <Label text="상품 가격" />
             <Input
                 id="F-mMenuPrice"
-                value="{path: 'ModifyModel>/menu_price'}"
+                value="{
+        path: 'ModifyModel>/menu_price',
+        type: 'sap.ui.model.type.Float',
+        formatOptions: { groupingEnabled: false, maxFractionDigits: 0 }
+    }"
                 type="Number"
+                liveChange="onPriceChange"
             />
+
+            <Label text="등록 상태" />
+            <Select
+                id="F-mRegistrationStatus"
+                selectedKey="{path: 'ModifyModel>/registration_status'}"
+            >
+                <items>
+                    <core:Item
+                        key="active"
+                        text="Active"
+                    />
+                    <core:Item
+                        key="deactive"
+                        text="Deactive"
+                    />
+                </items>
+            </Select>
 
             <Label text="상품 설명" />
             <TextArea

@@ -4,6 +4,7 @@ service CafeMenuService {
 
     // 메뉴 아이템 CRUD 서비스
     entity MenuItems       as projection on db.MenuItem;
+
     // 카테고리 관리 서비스
     entity MenuCategories  as projection on db.MenuCategory;
 
@@ -12,4 +13,7 @@ service CafeMenuService {
     entity ActiveMenuItems as projection on db.MenuItem
                               where
                                   registration_status = 'Active';
+
+    // bulkUpdate 작업 정의
+    action bulkUpdate(updates: array of { menu_code: Integer; registration_status: String; }) returns String;
 }

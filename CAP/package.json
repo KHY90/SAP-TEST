@@ -42,6 +42,11 @@
     },
     "hana": {
       "deploy-format": "hdbtable"
+    },
+    "odata": {
+      "protection": {
+        "maxPayload": 10485760
+      }
     }
   }
 }

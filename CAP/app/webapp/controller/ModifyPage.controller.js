@@ -46,6 +46,9 @@ sap.ui.define([
                 success: (data) => {
                     oModel.setData(data);
                     this.getView().setModel(oModel, "ModifyModel");
+
+                    // 카테고리와 소분류 설정
+                    this._initializeSubCategories(data.menu_category);
                 },
                 error: (err) => {
                     console.error("Failed to load data:", err);
@@ -54,10 +57,9 @@ sap.ui.define([
             });
         },
 
-        onCategoryChange: function (oEvent) {
-            const sSelectedCategory = oEvent.getParameter("selectedItem").getKey();
+        _initializeSubCategories: function (sCategory) {
             const oCategories = this.getView().getModel("categories").getData();
-            const aSmallCategories = oCategories.smallCategories[sSelectedCategory] || [];
+            const aSmallCategories = oCategories.smallCategories[sCategory] || [];
 
             const oSmallCategorySelect = this.byId("F-mMenuSmallCategory");
             oSmallCategorySelect.removeAllItems();
@@ -69,7 +71,17 @@ sap.ui.define([
                 }));
             });
 
-            // 소분류 초기화
+            // 기존 선택된 값 설정
+            const sSelectedSmallCategory = this.getView().getModel("ModifyModel").getProperty("/menu_small_category");
+            oSmallCategorySelect.setSelectedKey(sSelectedSmallCategory);
+        },
+
+        onCategoryChange: function (oEvent) {
+            const sSelectedCategory = oEvent.getParameter("selectedItem").getKey();
+            this._initializeSubCategories(sSelectedCategory);
+
+            // 카테고리 값 변경
+            this.getView().getModel("ModifyModel").setProperty("/menu_category", sSelectedCategory);
             this.getView().getModel("ModifyModel").setProperty("/menu_small_category", "");
         },
 
@@ -139,15 +151,31 @@ sap.ui.define([
         onSave: function () {
             const oData = this.getView().getModel("ModifyModel").getData();
 
+            if (oData.menu_price) {
+                oData.menu_price = parseFloat(oData.menu_price);
+                if (isNaN(oData.menu_price)) {
+                    MessageToast.show("가격은 숫자여야 합니다.");
+                    return;
+                }
+            }
+            
+            const now = new Date();
+            oData.modify_date = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}T${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}:${String(now.getSeconds()).padStart(2, "0")}`;
+
+            // 데이터 정리: undefined 값 제거
+            const cleanData = JSON.parse(JSON.stringify(oData, (key, value) => {
+                return value === undefined ? null : value;
+            }));
+
             $.ajax({
-                url: `/odata/v4/cafe-menu/MenuItems(${oData.menu_code})`, // PATCH 요청
+                url: `/odata/v4/cafe-menu/MenuItems(${cleanData.menu_code})`, // PATCH 요청
                 method: "PATCH",
                 contentType: "application/json",
-                data: JSON.stringify(oData),
+                data: JSON.stringify(cleanData), // 정리된 데이터 전송
                 success: () => {
                     MessageToast.show("수정이 완료되었습니다!");
                     const oRouter = this.getOwnerComponent().getRouter();
-                    oRouter.navTo("DetailPage", { menuCode: oData.menu_code });
+                    oRouter.navTo("DetailPage", { menuCode: cleanData.menu_code });
                 },
                 error: (err) => {
                     console.error("수정 실패:", err);
@@ -158,7 +186,8 @@ sap.ui.define([
 
         onNavBack: function () {
             const oRouter = this.getOwnerComponent().getRouter();
-            oRouter.navTo("DetailPage");
+            const sMenuCode = this.getView().getModel("ModifyModel").getProperty("/menu_code");
+            oRouter.navTo("DetailPage", { menuCode: sMenuCode });
         }
     });
 });

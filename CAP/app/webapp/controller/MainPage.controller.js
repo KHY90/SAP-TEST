@@ -2,43 +2,30 @@ sap.ui.define([
     "sap/ui/core/mvc/Controller",
     "sap/ui/model/json/JSONModel",
     "sap/m/MessageToast",
-    "sap/m/ViewSettingsDialog",
-    "sap/ui/core/Fragment"
-], function (Controller, JSONModel, MessageToast, ViewSettingsDialog, Fragment) {
+    "sap/ui/model/Sorter",
+    "sap/ui/model/Filter",
+    "sap/ui/model/FilterOperator",
+    "sap/ui/core/Fragment",
+    "ui5/walkthrough/controller/FilterController"
+], function (Controller, JSONModel, MessageToast, Sorter, Filter, FilterOperator, Fragment, FilterController) {
     "use strict";
 
     return Controller.extend("ui5.walkthrough.controller.MainPage", {
         onInit: function () {
-            const oI18nModel = new sap.ui.model.resource.ResourceModel({
-                bundleName: "ui5.walkthrough.i18n.i18n"
-            });
-            this.getView().setModel(oI18nModel, "i18n");
-
             const oViewModel = new JSONModel({ headerExpanded: true });
             this.getView().setModel(oViewModel);
 
+            // FilterController 초기화
+            this._oFilterController = new FilterController(this.getView());
             // 라우터 이벤트 등록
             const oRouter = this.getOwnerComponent().getRouter();
             oRouter.getRoute("MainPage").attachPatternMatched(this._onRouteMatched, this);
 
             this._loadData();
-            
-            this._loadHeader();
         },
 
         _onRouteMatched: function () {
-            // 라우트가 매칭될 때마다 데이터를 새로 로드
             this._loadData();
-        },
-
-        _loadHeader: function () {
-            const oPage = this.byId("mainPages");
-            Fragment.load({
-                name: "ui5.walkthrough.view.CommonHeader",
-                controller: this
-            }).then((oHeader) => {
-                oPage.setCustomHeader(oHeader);
-            });
         },
 
         _loadData: function () {
@@ -57,6 +44,10 @@ sap.ui.define([
                     }));
                     oModel.setData(formattedData);
                     this.getView().setModel(oModel, "RequestModel");
+
+                    // FilterController에 필터 데이터 전달
+                    const uniqueCategories = [...new Set(formattedData.map((item) => item.menu_category))];
+                    this._oFilterController.loadFilterData(uniqueCategories);
                 },
                 error: (err) => {
                     console.error("Failed to load data:", err);
@@ -68,107 +59,27 @@ sap.ui.define([
         _formatDate: function (dateString) {
             if (!dateString) return "";
             const oDate = new Date(dateString);
-            const year = oDate.getFullYear();
-            const month = String(oDate.getMonth() + 1).padStart(2, "0");
-            const day = String(oDate.getDate()).padStart(2, "0");
-            return `${year}-${month}-${day}`;
-        },
-        _getCategories: function () {
-            return [
-                { key: "음료", name: "음료" },
-                { key: "푸드", name: "푸드" },
-                { key: "상품", name: "상품" }
-            ];
+            return `${oDate.getFullYear()}-${String(oDate.getMonth() + 1).padStart(2, "0")}-${String(oDate.getDate()).padStart(2, "0")}`;
         },
 
-        _getSubGroups: function () {
-            return [
-                { key: "커피", name: "커피" },
-                { key: "차", name: "차" },
-                { key: "베이커리", name: "베이커리" }
-            ];
+        // 필터 초기화 버튼 클릭
+        onClearFilters: function () {
+            this._oFilterController.onClearFilters();
         },
 
-        onCategoryFilterChange: function (oEvent) {
-            this._applyFilters();
+        // 검색 버튼 클릭
+        onSearch: function () {
+            this._oFilterController.onSearch();
         },
-
-        onSubGroupFilterChange: function (oEvent) {
-            this._applyFilters();
-        },
-
-        onMenuCodeFilterChange: function (oEvent) {
-            this._applyFilters();
-        },
-
-        onPriceFilterChange: function () {
-            const sMinPrice = this.byId("priceMinFilter").getValue();
-            const sMaxPrice = this.byId("priceMaxFilter").getValue();
-            const aFilters = [];
-
-            if (sMinPrice) {
-                aFilters.push(new sap.ui.model.Filter("menu_price", sap.ui.model.FilterOperator.GE, parseInt(sMinPrice, 10)));
-            }
-
-            if (sMaxPrice) {
-                aFilters.push(new sap.ui.model.Filter("menu_price", sap.ui.model.FilterOperator.LE, parseInt(sMaxPrice, 10)));
-            }
-
-            const oTable = this.byId("idMenuTable");
-            const oBinding = oTable.getBinding("items");
-            oBinding.filter(aFilters);
-
-            sap.m.MessageToast.show(`${aFilters.length}개의 가격 필터가 적용되었습니다.`);
-        },
-
-        _applyFilters: function () {
-            const aFilters = [];
-
-            // 카테고리 필터
-            const aSelectedCategories = this.byId("categoryFilter").getSelectedKeys();
-            if (aSelectedCategories.length > 0) {
-                aFilters.push(new Filter("menu_category", FilterOperator.EQ, aSelectedCategories));
-            }
-
-            // 소그룹 필터
-            const aSelectedSubGroups = this.byId("subGroupFilter").getSelectedKeys();
-            if (aSelectedSubGroups.length > 0) {
-                aFilters.push(new Filter("menu_small_category", FilterOperator.EQ, aSelectedSubGroups));
-            }
-
-            // 메뉴 코드 필터
-            const sMenuCode = this.byId("menuCodeFilter").getValue();
-            if (sMenuCode) {
-                aFilters.push(new Filter("menu_code", FilterOperator.Contains, sMenuCode));
-            }
-
-            // 가격 필터
-            const oPriceRange = this.byId("priceFilter").getRange();
-            if (oPriceRange) {
-                aFilters.push(new Filter("menu_price", FilterOperator.BT, oPriceRange[0], oPriceRange[1]));
-            }
-
-            // 테이블에 필터 적용
-            const oTable = this.byId("idMenuTable");
-            const oBinding = oTable.getBinding("items");
-            oBinding.filter(aFilters);
-
-            MessageToast.show(`${aFilters.length}개의 필터가 적용되었습니다.`);
-        },
-
         handleSortButtonPressed: function () {
             if (!this._oSortDialog) {
-                Fragment.load({
-                    name: "ui5.walkthrough.view.SortDialog",
-                    controller: this
-                }).then((oDialog) => {
-                    this._oSortDialog = oDialog;
-                    this.getView().addDependent(this._oSortDialog);
-                    this._oSortDialog.open();
-                });
-            } else {
-                this._oSortDialog.open();
+                this._oSortDialog = sap.ui.xmlfragment(
+                    "ui5.walkthrough.view.SortDialog",
+                    this
+                );
+                this.getView().addDependent(this._oSortDialog);
             }
+            this._oSortDialog.open();
         },
 
         handleSortDialogConfirm: function (oEvent) {
@@ -179,7 +90,7 @@ sap.ui.define([
             const oTable = this.byId("idMenuTable");
             const oBinding = oTable.getBinding("items");
 
-            const oSorter = new sap.ui.model.Sorter(sKey, bDescending);
+            const oSorter = new Sorter(sKey, bDescending);
             oBinding.sort(oSorter);
 
             MessageToast.show(`정렬 기준: ${sKey}, ${bDescending ? "내림차순" : "오름차순"}`);
@@ -187,18 +98,15 @@ sap.ui.define([
 
         handleFilterButtonPressed: function () {
             if (!this._oFilterDialog) {
-                Fragment.load({
-                    name: "ui5.walkthrough.view.FilterDialog",
-                    controller: this
-                }).then((oDialog) => {
-                    this._oFilterDialog = oDialog;
-                    this.getView().addDependent(this._oFilterDialog);
-                    this._oFilterDialog.open();
-                });
-            } else {
-                this._oFilterDialog.open();
+                this._oFilterDialog = sap.ui.xmlfragment(
+                    "ui5.walkthrough.view.FilterDialog",
+                    this
+                );
+                this.getView().addDependent(this._oFilterDialog);
             }
+            this._oFilterDialog.open();
         },
+
         handleFilterDialogConfirm: function (oEvent) {
             const aFilterItems = oEvent.getParameter("filterItems");
             const aFilters = [];
@@ -211,17 +119,16 @@ sap.ui.define([
                 const sValue1 = aKeyParts[2];
                 const sValue2 = aKeyParts[3];
 
-                // 필터 조건 생성
                 let oFilter;
                 switch (sOperator) {
                     case "LE":
-                        oFilter = new sap.ui.model.Filter(sProperty, sap.ui.model.FilterOperator.LE, sValue1);
+                        oFilter = new Filter(sProperty, FilterOperator.LE, sValue1);
                         break;
                     case "BT":
-                        oFilter = new sap.ui.model.Filter(sProperty, sap.ui.model.FilterOperator.BT, sValue1, sValue2);
+                        oFilter = new Filter(sProperty, FilterOperator.BT, sValue1, sValue2);
                         break;
                     case "GT":
-                        oFilter = new sap.ui.model.Filter(sProperty, sap.ui.model.FilterOperator.GT, sValue1);
+                        oFilter = new Filter(sProperty, FilterOperator.GT, sValue1);
                         break;
                 }
                 if (oFilter) {
@@ -238,17 +145,13 @@ sap.ui.define([
 
         handleGroupButtonPressed: function () {
             if (!this._oGroupDialog) {
-                Fragment.load({
-                    name: "ui5.walkthrough.view.GroupDialog",
-                    controller: this
-                }).then((oDialog) => {
-                    this._oGroupDialog = oDialog;
-                    this.getView().addDependent(this._oGroupDialog);
-                    this._oGroupDialog.open();
-                });
-            } else {
-                this._oGroupDialog.open();
+                this._oGroupDialog = sap.ui.xmlfragment(
+                    "ui5.walkthrough.view.GroupDialog",
+                    this
+                );
+                this.getView().addDependent(this._oGroupDialog);
             }
+            this._oGroupDialog.open();
         },
 
         handleGroupDialogConfirm: function (oEvent) {
@@ -259,7 +162,7 @@ sap.ui.define([
             const oTable = this.byId("idMenuTable");
             const oBinding = oTable.getBinding("items");
 
-            const oSorter = new sap.ui.model.Sorter(sKey, bDescending, true);
+            const oSorter = new Sorter(sKey, bDescending, true);
             oBinding.sort(oSorter);
 
             MessageToast.show(`그룹 기준: ${sKey}, ${bDescending ? "내림차순" : "오름차순"}`);
@@ -269,33 +172,86 @@ sap.ui.define([
             const oTable = this.byId("idMenuTable");
             const oBinding = oTable.getBinding("items");
 
-            console.log("Resetting group dialog...");
-
             if (oBinding) {
-                oBinding.sort(null); // 그룹화 초기화
-                console.log("Group reset applied to table.");
+                oBinding.sort(null);
                 MessageToast.show("그룹화가 초기화되었습니다.");
-            } else {
-                console.warn("Table binding not found.");
             }
 
             if (this._oGroupDialog) {
                 this._oGroupDialog.destroy();
                 this._oGroupDialog = null;
-                console.log("Group dialog destroyed.");
             }
-            this._refreshMainPage();
         },
+
+        formatStatus: function (status) {
+            return status === "active" ? "image/check.png" : "image/soldout.png";
+        },
+
+        onToggleSoldOut: function () {
+            const oTable = this.byId("idMenuTable");
+            const aSelectedItems = oTable.getSelectedItems();
+        
+            if (aSelectedItems.length === 0) {
+                MessageToast.show("항목을 선택해주세요.");
+                return;
+            }
+        
+            const oModel = this.getView().getModel("RequestModel");
+        
+            // 선택된 항목의 데이터 수집 및 상태 토글
+            const updatedItems = aSelectedItems.map((oItem) => {
+                const oContext = oItem.getBindingContext("RequestModel");
+                const oData = oContext.getObject();
+        
+                // menu_code 검증
+                if (!oData.menu_code) {
+                    console.error("Invalid menu_code:", oData.menu_code);
+                    return null;
+                }
+        
+                // 상태 토글
+                const newStatus = oData.registration_status === "active" ? "deactive" : "active";
+        
+                // 모델 업데이트
+                oModel.setProperty(`${oContext.getPath()}/registration_status`, newStatus);
+        
+                // 서버로 전송할 데이터 구성
+                return {
+                    menu_code: oData.menu_code,
+                    registration_status: newStatus,
+                };
+            }).filter(item => item !== null); // 유효하지 않은 항목 제거
+        
+            if (updatedItems.length === 0) {
+                MessageToast.show("유효한 항목이 없습니다.");
+                return;
+            }
+        
+            console.log("Payload sent to server:", JSON.stringify(updatedItems));
+        
+            // 서버로 상태 업데이트 요청
+            $.ajax({
+                url: "/odata/v4/cafe-menu/bulkUpdate",
+                method: "POST",
+                contentType: "application/json",
+                data: JSON.stringify({ updates: updatedItems }), // 데이터 래핑
+                success: () => {
+                    MessageToast.show("판매 상태가 변경되었습니다.");
+                },
+                error: (err) => {
+                    console.error("판매 상태 변경 실패:", err);
+                    MessageToast.show("판매 상태 변경 중 오류가 발생했습니다.");
+                }
+            });
+        
+            // 선택 초기화
+            oTable.removeSelections(true);
+        },        
 
         onDetailPress: function (oEvent) {
             const oButton = oEvent.getSource();
             const oContext = oButton.getBindingContext("RequestModel");
             const sMenuCode = oContext.getProperty("menu_code");
-
-            if (!sMenuCode) {
-                sap.m.MessageToast.show("잘못된 메뉴 코드입니다.");
-                return;
-            }
 
             const oRouter = this.getOwnerComponent().getRouter();
             oRouter.navTo("DetailPage", { menuCode: sMenuCode });
@@ -307,8 +263,25 @@ sap.ui.define([
         },
 
         onSelectionChange: function (oEvent) {
-            const oSelectedItems = oEvent.getParameter("selectedItems");
-            console.log("Selected Items: ", oSelectedItems);
+            const aSelectedItems = oEvent.getParameter("selectedItems");
+            const count = aSelectedItems.length;
+            MessageToast.show(`${count}개의 항목이 선택되었습니다.`);
+        },
+
+        handleFilterButtonPressed: function () {
+            this._oFilterController.handleFilterButtonPressed();
+        },
+
+        handleFilterDialogConfirm: function (oEvent) {
+            this._oFilterController.handleFilterDialogConfirm(oEvent);
+        },
+
+        handleGroupButtonPressed: function () {
+            this._oFilterController.handleGroupButtonPressed();
+        },
+
+        handleGroupDialogConfirm: function (oEvent) {
+            this._oFilterController.handleGroupDialogConfirm(oEvent);
         }
     });
 });

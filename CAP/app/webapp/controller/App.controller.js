@@ -11,6 +11,16 @@ sap.ui.define([
 
         _onRouteMatched: function (oEvent) {
             console.log("Route Matched:", oEvent.getParameter("name"));
+        },
+
+        onLogoPressed: function () {
+            const oRouter = this.getOwnerComponent().getRouter();
+            oRouter.navTo("MainPage");
+        },
+
+        onAvatarPressed: function () {
+            const oRouter = this.getOwnerComponent().getRouter();
+            oRouter.navTo("MainPage");
         }
     });
 });

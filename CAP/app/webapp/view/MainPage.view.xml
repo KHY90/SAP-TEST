@@ -41,106 +41,92 @@
         <f:header>
             <f:DynamicPageHeader>
                 <f:content>
-                    <fb:FilterBar
-                        id="filterbar"
-                        persistencyKey="myPersKey"
-                        useToolbar="false"
-                        search=".onSearch"
-                        filterChange=".onFilterChange"
-                        afterVariantLoad=".onAfterVariantLoad"
-                    >
-                        <fb:filterGroupItems>
-                            <!-- 카테고리 필터 -->
-                            <fb:FilterGroupItem
-                                name="Category"
-                                label="카테고리"
-                                groupName="Filters"
-                                visibleInFilterBar="true"
-                            >
-                                <fb:control>
-                                    <MultiComboBox
-                                        id="categoryFilter"
-                                        selectionChange="onCategoryFilterChange"
-                                        items="{
-                    path: 'RequestModel>/categories',
-                    templateShareable: true
-                }"
-                                    >
-                                        <core:Item
-                                            key="{RequestModel>key}"
-                                            text="{RequestModel>name}"
-                                        />
-                                    </MultiComboBox>
-                                </fb:control>
-                            </fb:FilterGroupItem>
+                    <VBox>
+                        <!-- 필터 초기화 버튼 포함 -->
+                        <OverflowToolbar>
+                            <Button
+                                text="필터 초기화"
+                                press="onClearFilters"
+                                type="Transparent"
+                                icon="sap-icon://decline"
+                            />
+                        </OverflowToolbar>
 
-                            <!-- 소그룹 필터 -->
-                            <fb:FilterGroupItem
-                                name="SubGroup"
-                                label="소그룹"
-                                groupName="Filters"
-                                visibleInFilterBar="true"
-                            >
-                                <fb:control>
-                                    <MultiComboBox
-                                        id="subGroupFilter"
-                                        selectionChange="onSubGroupFilterChange"
-                                        items="{
-                    path: 'RequestModel>/subGroups',
-                    templateShareable: true
-                }"
-                                    >
-                                        <core:Item
-                                            key="{RequestModel>key}"
-                                            text="{RequestModel>name}"
-                                        />
-                                    </MultiComboBox>
-                                </fb:control>
-                            </fb:FilterGroupItem>
-
-                            <!-- 메뉴 코드 필터 -->
-                            <fb:FilterGroupItem
-                                name="MenuCode"
-                                label="메뉴 코드"
-                                groupName="Filters"
-                                visibleInFilterBar="true"
-                            >
-                                <fb:control>
-                                    <Input
-                                        id="menuCodeFilter"
-                                        liveChange="onMenuCodeFilterChange"
-                                        placeholder="메뉴 코드를 입력하세요"
-                                    />
-                                </fb:control>
-                            </fb:FilterGroupItem>
-
-                            <!-- 가격 필터 -->
-                            <fb:FilterGroupItem
-                                name="Price"
-                                label="가격"
-                                groupName="Filters"
-                                visibleInFilterBar="true"
-                            >
-                                <fb:control>
-                                    <HBox>
+                        <fb:FilterBar
+                            id="filterbar"
+                            persistencyKey="myPersKey"
+                            useToolbar="false"
+                            search=".onSearch"
+                            filterChange=".onFilterChange"
+                            afterVariantLoad=".onAfterVariantLoad"
+                        >
+                            <fb:filterGroupItems>
+                                <!-- 카테고리 필터 -->
+                                <fb:FilterGroupItem
+                                    name="Category"
+                                    label="카테고리"
+                                    groupName="Filters"
+                                    visibleInFilterBar="true"
+                                >
+                                    <fb:control>
                                         <Input
-                                            id="priceMinFilter"
-                                            placeholder="최소 가격"
-                                            type="Number"
-                                            liveChange="onPriceFilterChange"
+                                            id="categoryFilter"
+                                            placeholder="카테고리를 입력하세요"
+                                            liveChange="onCategoryFilterChange"
+                                            width="100%"
                                         />
-                                        <Text text="~" />
+                                    </fb:control>
+                                </fb:FilterGroupItem>
+
+                                <!-- 메뉴 코드 필터 -->
+                                <fb:FilterGroupItem
+                                    name="MenuCode"
+                                    label="등록 번호"
+                                    groupName="Filters"
+                                    visibleInFilterBar="true"
+                                >
+                                    <fb:control>
                                         <Input
-                                            id="priceMaxFilter"
-                                            placeholder="최대 가격"
-                                            type="Number"
-                                            liveChange="onPriceFilterChange"
+                                            id="menuCodeFilter"
+                                            liveChange="onMenuCodeFilterChange"
+                                            placeholder="등록 번호를 입력하세요"
+                                            width="100%"
                                         />
-                                    </HBox>
-                                </fb:control>
-                            </fb:FilterGroupItem>
-                        </fb:filterGroupItems>
-                    </fb:FilterBar>
+                                    </fb:control>
+                                </fb:FilterGroupItem>
+
+                                <!-- 가격 필터 -->
+                                <fb:FilterGroupItem
+                                    name="Price"
+                                    label="가격"
+                                    groupName="Filters"
+                                    visibleInFilterBar="true"
+                                >
+                                    <fb:control>
+                                        <HBox
+                                            width="100%"
+                                            justifyContent="SpaceBetween"
+                                        >
+                                            <Input
+                                                id="priceMinFilter"
+                                                placeholder="최소 가격"
+                                                type="Number"
+                                                liveChange="onPriceFilterChange"
+                                                width="100%"
+                                            />
+                                            <Input
+                                                id="priceMaxFilter"
+                                                placeholder="최대 가격"
+                                                type="Number"
+                                                liveChange="onPriceFilterChange"
+                                                width="100%"
+                                            />
+                                        </HBox>
+                                    </fb:control>
+                                </fb:FilterGroupItem>
+                            </fb:filterGroupItems>
+                        </fb:FilterBar>
+                    </VBox>
                 </f:content>
             </f:DynamicPageHeader>
         </f:header>
@@ -154,24 +140,32 @@
                     <IconTabFilter text="메뉴 목록">
                         <Table
                             id="idMenuTable"
+                            class="sapUiResponsiveContentPadding"
                             inset="false"
                             sticky="HeaderToolbar,ColumnHeaders"
+                            mode="MultiSelect"
+                            growing="true"
+                            growingScrollToLoad="true"
+                            width="100%"
                             items="{
-                                path: 'RequestModel>/',
-                                templateShareable: true
-                            }"
+        path: 'RequestModel>/',
+        templateShareable: true
+    }"
                             itemPress="onItemPress"
                         >
                             <headerToolbar>
                                 <OverflowToolbar>
-                                    <!-- <Title text="카페 메뉴" level="H2" /> -->
                                     <Button
-                                        text="메뉴 등록"
+                                        text="등록"
                                         type="Emphasized"
                                         press="onRegisterPress"
                                     />
+                                    <Button
+                                        text="매진"
+                                        press="onToggleSoldOut"
+                                        type="Reject"
+                                    />
                                     <ToolbarSpacer />
-
                                     <Button
                                         tooltip="Sort"
                                         icon="sap-icon://sort"
@@ -190,6 +184,7 @@
                                 </OverflowToolbar>
                             </headerToolbar>
                             <columns>
+                                <!-- 간단한 열 정의 -->
                                 <Column>
                                     <Text text="등록번호" />
                                 </Column>
@@ -206,11 +201,14 @@
                                     <Text text="등록 날짜" />
                                 </Column>
                                 <Column>
+                                    <Text text="판매 여부" />
+                                </Column>
+                                <Column>
                                     <Text text="상세보기" />
                                 </Column>
                             </columns>
                             <items>
-                                <ColumnListItem>
+                                <ColumnListItem class="centerAlignedCells">
                                     <cells>
                                         <Text text="{RequestModel>menu_code}" />
                                         <Text
@@ -220,10 +218,19 @@
                                             text="{RequestModel>menu_category}"
                                         />
                                         <Text
-                                            text="{RequestModel>menu_price}"
+                                            text="{RequestModel>menu_price}원"
                                         />
                                         <Text
                                             text="{RequestModel>registration_date}"
+                                        />
+                                        <Image
+                                            src="{
+                        path: 'RequestModel>registration_status',
+                        formatter: '.formatStatus'
+                    }"
+                                            width="20px"
+                                            height="20px"
+                                            alt="Status Icon"
                                         />
                                         <Button
                                             icon="sap-icon://action"

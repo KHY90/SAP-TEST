@@ -18,25 +18,17 @@
                 <f:heading>
                     <HBox>
                         <Title text="{DetailModel>/menu_name_kor}" />
+                        
                         <Image
-                            id="productImageHeader"
-                            src="{DetailModel>/menu_image}"
-                            alt="등록된 이미지"
+                            src="{path: 'DetailModel>/menu_image'}"
+                            alt="Menu Image"
                             width="50px"
                             height="50px"
-                            visible="{= !!${DetailModel>/menu_image}}"
                             class="sapUiTinyMarginBegin"
                         />
                     </HBox>
                 </f:heading>
-                <f:breadcrumbs>
-                    <Breadcrumbs>
-                        <Link
-                            text="홈"
-                            press="onNavBack"
-                        />
-                    </Breadcrumbs>
-                </f:breadcrumbs>
+
                 <f:expandedContent>
                     <Label text="등록번호: {DetailModel>/menu_code}" />
                 </f:expandedContent>
@@ -44,6 +36,13 @@
                     <Label text="등록번호: {DetailModel>/menu_code}" />
                 </f:snappedContent>
                 <f:actions>
+                    <Button
+                        text="목록"
+                        type="Negative"
+                        press="onNavBack"
+                        tooltip="메인페이지"
+                        icon="sap-icon://close-command-field"
+                    />
                     <Button
                         text="수정"
                         icon="sap-icon://edit"
@@ -79,7 +78,7 @@
                                         <Text text="목록" />
                                     </Column>
                                     <Column>
-                                        <Text text="값" />
+                                        <Text text="" />
                                     </Column>
                                 </columns>
                                 <items>
@@ -144,6 +143,24 @@
                                             <Text text="상품 설명" />
                                             <Text
                                                 text="{DetailModel>/menu_description}"
+                                            />
+                                        </cells>
+                                    </ColumnListItem>
+                                    <ColumnListItem>
+                                        <cells>
+                                            <Text text="판매 여부" />
+
+                                            <Text
+                                                text="{DetailModel>/registration_status}"
+                                            />
+                                            <Image
+                                                src="{
+                                                        path: 'DetailModel>registration_status',
+                                                        formatter: '.formatStatus'
+                                                    }"
+                                                width="50px"
+                                                height="50px"
+                                                alt="{= ${DetailModel>registration_status} === 'active' ? 'Active Status Icon' : 'Inactive Status Icon' }"
                                             />
                                         </cells>
                                     </ColumnListItem>

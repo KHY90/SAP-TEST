@@ -18,7 +18,7 @@ entity MenuItem {
         registration_status : String         @title: '등록 상태'; // 상태 (예: 활성, 비활성)
         menu_description    : String         @title: '상품 설명'; // 상세 설명
         menu_nutrition_info : String         @title: '제품 영양 정보'; // 영양 정보
-        menu_image          : LargeBinary    @title: '이미지'; // 제품 이미지
+        menu_image          : LargeBinary    @title: '이미지'; // MIME 형식 지정 제품 이미지
         registration_date   : DateTime       @title: '등록 날짜'; // 등록 일시
         modify_date         : DateTime       @title: '수정 날짜'; // 수정 일시
 };
